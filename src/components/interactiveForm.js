@@ -82,7 +82,7 @@ export default function InteractiveForm() {
           <Textarea
             id="description"
             name="description"
-            placeholder="Describe a key achievement or initiative of Prime Minister Modi..."
+            placeholder="Describe you topic......"
             className="min-h-[180px] px-3 bg-gray-950/50 backdrop-blur-sm border-gray-800 hover:border-gray-700 
                        focus:border-gray-600 rounded-xl text-gray-200 placeholder:text-gray-500 
                        transition-all duration-200 resize-none text-lg"
