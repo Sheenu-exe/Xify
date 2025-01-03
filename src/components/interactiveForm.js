@@ -4,29 +4,36 @@ import { Button } from "../../components/ui/button";
 import { Textarea } from "../../components/ui/textarea";
 import { Card, CardContent } from "../../components/ui/card";
 import { Copy, RotateCw, ArrowUpRight } from "lucide-react";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export default function InteractiveForm() {
   const [tweet, setTweet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const API_KEY = 'AIzaSyADzOgkxQiOq-gFoGLIeOCwwIATVM6pBjo' // Replace with your API key
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const description = formData.get('description');
     if (!description.trim()) return;
-    
+
     setLoading(true);
     try {
-      const response = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description }),
-      });
-      const result = await response.json();
-      if (result.tweet) setTweet(result.tweet);
+      const genAI = new GoogleGenerativeAI( API_KEY);
+      const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const prompt = `Please generate a short regarding given description. Strictly only write tweet and for the given topic only. Dont give options, directly give a tweet which directly shareable. Here is the description: ${description}`;
+      const result = await model.generateContent([prompt]);
+
+      if (result && result.response) {
+        const generatedText = await result.response.text();
+        setTweet(generatedText);
+      } else {
+        throw new Error('No response received from model.');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error generating tweet:', error);
+      alert('Error generating tweet. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -44,13 +51,15 @@ export default function InteractiveForm() {
     if (tweet) {
       setLoading(true);
       try {
-        const response = await fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ description: tweet }),
-        });
-        const result = await response.json();
-        if (result.tweet) setTweet(result.tweet);
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const prompt = `Please generate a tweet that highlights a key achievement or initiative of Prime Minister Narendra Modi. Based on the description provided below: ${tweet}`;
+        const result = await model.generateContent([prompt]);
+
+        if (result && result.response) {
+          const generatedText = await result.response.text();
+          setTweet(generatedText);
+        }
       } finally {
         setLoading(false);
       }
@@ -73,7 +82,7 @@ export default function InteractiveForm() {
           <Textarea
             id="description"
             name="description"
-            placeholder="Express your idea..."
+            placeholder="Describe a key achievement or initiative of Prime Minister Modi..."
             className="min-h-[180px] px-3 bg-gray-950/50 backdrop-blur-sm border-gray-800 hover:border-gray-700 
                        focus:border-gray-600 rounded-xl text-gray-200 placeholder:text-gray-500 
                        transition-all duration-200 resize-none text-lg"
