@@ -53,7 +53,7 @@ export default function InteractiveForm() {
       try {
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const prompt = `Please generate a tweet that highlights a key achievement or initiative of Prime Minister Narendra Modi. Based on the description provided below: ${tweet}`;
+        const prompt = `Please generate a short regarding given description. Strictly only write tweet and for the given topic only. Dont give options, directly give a tweet which directly shareable. Here is the description:${tweet}`;
         const result = await model.generateContent([prompt]);
 
         if (result && result.response) {
@@ -82,7 +82,7 @@ export default function InteractiveForm() {
           <Textarea
             id="description"
             name="description"
-            placeholder="Describe a key achievement or initiative of Prime Minister Modi..."
+            placeholder="Describe your desired topic..."
             className="min-h-[180px] px-3 bg-gray-950/50 backdrop-blur-sm border-gray-800 hover:border-gray-700 
                        focus:border-gray-600 rounded-xl text-gray-200 placeholder:text-gray-500 
                        transition-all duration-200 resize-none text-lg"
