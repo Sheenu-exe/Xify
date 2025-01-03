@@ -53,7 +53,7 @@ export default function InteractiveForm() {
       try {
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const prompt = `Please generate a short regarding given description. Strictly only write tweet and for the given topic only. Dont give options, directly give a tweet which directly shareable. Here is the description:${tweet}`;
+        const prompt = `Please change the tweet's content but keep the topic same  Strictly only write tweet and for the given topic only. Dont give options, directly give a tweet which directly shareable. here is the tweet :${tweet}`;
         const result = await model.generateContent([prompt]);
 
         if (result && result.response) {
